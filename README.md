@@ -22,3 +22,10 @@ Open `http://localhost:8000`.
 - **SQLite Cache over Redis:** To maintain the zero-dependency philosophy, SQLite acts as a persistent cache with a 15-minute TTL. This avoids requiring a separate Redis server while still protecting the external API.
 - **CSS-based Charts:** Instead of importing a heavy charting library from a CDN (which may be blocked in enterprise environments), the dashboard uses native CSS transitions to render proportional bars.
 - **Proxy Awareness:** The backend uses `urllib`, which natively respects the system's `HTTP_PROXY` and `HTTPS_PROXY` environment variables, making it robust in restricted corporate networks.
+
+- ## Security Posture (CSP)
+The application is served via a WSGI backend that enforces a strict Content Security Policy. The exact headers are defined in `security/headers.py`:
+- `script-src 'self'` (No inline JavaScript; ES modules are loaded externally)
+- `style-src 'self' 'unsafe-inline'` (Permits dynamic CSS for dashboard bar animations)
+- `connect-src 'self'` (Restricts fetch requests to the local backend proxy)
+- `frame-ancestors 'none'` (Prevents clickjacking)
