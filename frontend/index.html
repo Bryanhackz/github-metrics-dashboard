@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}</title>
+    <meta name="description" content="{{DESCRIPTION}}">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <h1>GitHub Metrics.</h1>
+    </header>
+    <main class="container">
+        <section class="search-box">
+            <input type="text" id="repo-input" placeholder="e.g. facebook/react" value="Bryanhackz/report_generator">
+            <button id="btn-analyze">Analyze</button>
+        </section>
+
+        <section id="dashboard" class="dashboard hidden">
+            <div class="repo-header">
+                <h2 id="repo-name"></h2>
+                <p id="repo-desc"></p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card"><span class="stat-label">Stars</span><span class="stat-value" id="stat-stars">0</span></div>
+                <div class="stat-card"><span class="stat-label">Forks</span><span class="stat-value" id="stat-forks">0</span></div>
+                <div class="stat-card"><span class="stat-label">Issues</span><span class="stat-value" id="stat-issues">0</span></div>
+            </div>
+
+            <div class="chart-container">
+                <h3>Popularity Breakdown</h3>
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <span class="bar-label">Stars</span>
+                        <div class="bar-track"><div class="bar-fill" id="bar-stars" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">Forks</span>
+                        <div class="bar-track"><div class="bar-fill" id="bar-forks" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">Issues</span>
+                        <div class="bar-track"><div class="bar-fill" id="bar-issues" style="width: 0%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="error-msg" class="error hidden"></div>
+    </main>
+    <script src="/main.js"></script>
+</body>
+</html>
