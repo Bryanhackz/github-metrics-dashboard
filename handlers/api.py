@@ -3,6 +3,7 @@ import urllib.error
 import json
 import sqlite3
 import time
+import re
 from pathlib import Path
 
 DB_PATH = Path(__file__).resolve().parent.parent / "cache.db"
@@ -24,9 +25,12 @@ def get_github_metrics(path: str) -> tuple[str, str, str]:
         return "400 Bad Request", "application/json", json.dumps({"error": "Invalid format. Use /api/metrics/owner/repo"})
     
     owner, repo = parts[2], parts[3]
+    
+    if not re.fullmatch(r"[a-zA-Z0-9_-]+", owner) or not re.fullmatch(r"[a-zA-Z0-9_.-]+", repo):
+        return "400 Bad Request", "application/json", json.dumps({"error": "Invalid repository characters"})
+
     cache_key = f"{owner}/{repo}"
 
-    # SQLite Cache Layer (15 minute TTL)
     with sqlite3.connect(DB_PATH) as conn:
         row = conn.execute(
             "SELECT data, expires_at FROM cache WHERE key = ?", (cache_key,)
@@ -42,7 +46,6 @@ def get_github_metrics(path: str) -> tuple[str, str, str]:
     })
 
     try:
-        # urllib automatically reads HTTP_PROXY / HTTPS_PROXY from Windows environment
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode("utf-8"))
             metrics = {
@@ -67,5 +70,5 @@ def get_github_metrics(path: str) -> tuple[str, str, str]:
         if e.code == 404:
             return "404 Not Found", "application/json", json.dumps({"error": "Repository not found"})
         return "500 Internal Server Error", "application/json", json.dumps({"error": f"GitHub API error: {e.code}"})
-    except Exception as e:
+    except Exception:
         return "503 Service Unavailable", "application/json", json.dumps({"error": "Network error. Check your proxy settings."})
